@@ -1048,15 +1048,19 @@ h1 {
 
 .split-bracket {
   display: grid;
-  grid-template-columns: minmax(560px, 1fr) minmax(230px, 0.38fr) minmax(560px, 1fr);
+  grid-template-columns: minmax(660px, 1fr) minmax(240px, 0.34fr) minmax(660px, 1fr);
   gap: 18px;
   overflow-x: auto;
   padding: 6px 2px 16px;
 }
 
+.mobile-bracket {
+  display: none;
+}
+
 .bracket-side {
   display: grid;
-  grid-template-columns: repeat(4, minmax(130px, 1fr));
+  grid-template-columns: repeat(4, minmax(150px, 1fr));
   gap: 12px;
   align-items: stretch;
 }
@@ -1065,7 +1069,6 @@ h1 {
 .bracket-side.left .bracket-column:nth-child(2) { order: 2; }
 .bracket-side.left .bracket-column:nth-child(3) { order: 3; }
 .bracket-side.left .bracket-column:nth-child(4) { order: 4; }
-.bracket-center { order: 5; }
 .bracket-side.right .bracket-column:nth-child(1) { order: 6; }
 .bracket-side.right .bracket-column:nth-child(2) { order: 7; }
 .bracket-side.right .bracket-column:nth-child(3) { order: 8; }
@@ -1119,8 +1122,8 @@ h1 {
 
 .bracket-team {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 42px;
-  gap: 8px;
+  grid-template-columns: 26px minmax(0, 1fr) 40px;
+  gap: 7px;
   align-items: center;
   min-height: 34px;
   padding: 5px 6px;
@@ -1131,17 +1134,21 @@ h1 {
 }
 
 .bracket-team.flag-only {
-  grid-template-columns: 34px 42px;
-  justify-content: center;
+  grid-template-columns: 26px minmax(0, 1fr) 40px;
 }
 
 .bracket-flag {
-  width: 34px;
-  height: 34px;
-  font-size: 21px;
+  width: 26px;
+  height: 26px;
+  font-size: 17px;
 }
 
-.bracket-team > span:not(.flag-circle) {
+.bracket-country-tooltip {
+  min-width: 0;
+}
+
+.bracket-country-name {
+  display: block;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -1153,7 +1160,7 @@ h1 {
 }
 
 .score-input.compact {
-  width: 42px;
+  width: 40px;
   height: 32px;
 }
 
@@ -1239,6 +1246,10 @@ code {
 /* Mobile refinement pass */
 .tooltip-target {
   position: relative;
+}
+
+.flag-circle.tooltip-target {
+  overflow: visible;
 }
 
 .tooltip-target::after {
@@ -1402,6 +1413,15 @@ code {
     flex-direction: column;
   }
 
+  .split-bracket.desktop-bracket {
+    display: none;
+  }
+
+  .mobile-bracket {
+    display: grid;
+    gap: 14px;
+  }
+
   .bracket-side,
   .bracket-center {
     display: contents;
@@ -1425,8 +1445,9 @@ code {
     max-width: none;
   }
 
+  .bracket-team,
   .bracket-team.flag-only {
-    grid-template-columns: 40px 64px;
+    grid-template-columns: 40px minmax(0, 1fr) 64px;
     justify-content: start;
   }
 

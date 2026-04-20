@@ -577,24 +577,45 @@ function renderBracket(matches, resultStore, mode = "prediction") {
   const sf = matches.filter((match) => match.id.startsWith("sf"));
   const third = matches.filter((match) => match.id.startsWith("third"));
   const final = matches.filter((match) => match.id.startsWith("final"));
+  const rounds = { r32, r16, qf, sf, third, final };
   return `
-    <div class="split-bracket">
+    ${renderDesktopBracket(rounds, resultStore, mode)}
+    ${renderMobileBracket(rounds, resultStore, mode)}
+  `;
+}
+
+function renderDesktopBracket(rounds, resultStore, mode) {
+  return `
+    <div class="split-bracket desktop-bracket" aria-label="Llaves completas">
       <div class="bracket-side left">
-        ${renderBracketColumn("Round of 32", r32.slice(0, 8), resultStore, mode)}
-        ${renderBracketColumn("Round of 16", r16.slice(0, 4), resultStore, mode)}
-        ${renderBracketColumn("Quarterfinals", qf.slice(0, 2), resultStore, mode)}
-        ${renderBracketColumn("Semifinal", sf.slice(0, 1), resultStore, mode)}
+        ${renderBracketColumn("Round of 32", rounds.r32.slice(0, 8), resultStore, mode)}
+        ${renderBracketColumn("Round of 16", rounds.r16.slice(0, 4), resultStore, mode)}
+        ${renderBracketColumn("Quarterfinals", rounds.qf.slice(0, 2), resultStore, mode)}
+        ${renderBracketColumn("Semifinal", rounds.sf.slice(0, 1), resultStore, mode)}
       </div>
       <div class="bracket-center">
-        ${renderBracketColumn("Final", final, resultStore, mode)}
-        ${renderBracketColumn("Third Place", third, resultStore, mode)}
+        ${renderBracketColumn("Final", rounds.final, resultStore, mode)}
+        ${renderBracketColumn("Third Place", rounds.third, resultStore, mode)}
       </div>
       <div class="bracket-side right">
-        ${renderBracketColumn("Semifinal", sf.slice(1, 2), resultStore, mode)}
-        ${renderBracketColumn("Quarterfinals", qf.slice(2, 4), resultStore, mode)}
-        ${renderBracketColumn("Round of 16", r16.slice(4, 8), resultStore, mode)}
-        ${renderBracketColumn("Round of 32", r32.slice(8, 16), resultStore, mode)}
+        ${renderBracketColumn("Semifinal", rounds.sf.slice(1, 2), resultStore, mode)}
+        ${renderBracketColumn("Quarterfinals", rounds.qf.slice(2, 4), resultStore, mode)}
+        ${renderBracketColumn("Round of 16", rounds.r16.slice(4, 8), resultStore, mode)}
+        ${renderBracketColumn("Round of 32", rounds.r32.slice(8, 16), resultStore, mode)}
       </div>
+    </div>
+  `;
+}
+
+function renderMobileBracket(rounds, resultStore, mode) {
+  return `
+    <div class="mobile-bracket" aria-label="Llaves por ronda">
+      ${renderBracketColumn("Round of 32", rounds.r32, resultStore, mode)}
+      ${renderBracketColumn("Round of 16", rounds.r16, resultStore, mode)}
+      ${renderBracketColumn("Quarterfinals", rounds.qf, resultStore, mode)}
+      ${renderBracketColumn("Semifinals", rounds.sf, resultStore, mode)}
+      ${renderBracketColumn("Third Place", rounds.third, resultStore, mode)}
+      ${renderBracketColumn("Final", rounds.final, resultStore, mode)}
     </div>
   `;
 }
@@ -617,14 +638,14 @@ function renderBracketMatch(match, result, mode) {
   return `
     <article class="bracket-match" data-match-id="${match.id}" data-mode="${mode}">
       <div class="bracket-meta">#${match.number} · ${formatDate(match.date)}</div>
-      <label class="bracket-team flag-only ${homeWinner ? "winner" : ""}" title="${escapeHtml(match.home)}">
+      <label class="bracket-team ${homeWinner ? "winner" : ""}" title="${escapeHtml(match.home)}">
         ${renderFlag(match.home, "bracket-flag")}
-        <span class="sr-only">${escapeHtml(match.home)}</span>
+        ${renderBracketTeamName(match.home)}
         <input class="score-input compact" inputmode="numeric" type="number" min="0" max="20" data-side="homeGoals" value="${result.homeGoals ?? ""}" aria-label="${escapeHtml(match.home)} goals" />
       </label>
-      <label class="bracket-team flag-only ${awayWinner ? "winner" : ""}" title="${escapeHtml(match.away)}">
+      <label class="bracket-team ${awayWinner ? "winner" : ""}" title="${escapeHtml(match.away)}">
         ${renderFlag(match.away, "bracket-flag")}
-        <span class="sr-only">${escapeHtml(match.away)}</span>
+        ${renderBracketTeamName(match.away)}
         <input class="score-input compact" inputmode="numeric" type="number" min="0" max="20" data-side="awayGoals" value="${result.awayGoals ?? ""}" aria-label="${escapeHtml(match.away)} goals" />
       </label>
       ${winnerNeeded ? `
@@ -635,6 +656,11 @@ function renderBracketMatch(match, result, mode) {
         </select>` : ""}
     </article>
   `;
+}
+
+function renderBracketTeamName(team) {
+  const safeTeam = escapeHtml(team);
+  return `<span class="bracket-country-tooltip tooltip-target" title="${safeTeam}" data-tooltip="${safeTeam}" tabindex="0"><span class="bracket-country-name">${safeTeam}</span></span>`;
 }
 
 function renderMatch(match, result, mode) {
